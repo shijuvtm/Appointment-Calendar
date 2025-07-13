@@ -1,24 +1,23 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "react"; 
 import { useIsMobile } from "./useIsMobile"; 
 import "./Calendar.css";
 
-function Calendar()
-     {
-          const [appointments, setAppointments] = useState([]);
-          const [currentDate, setCurrentDate] = useState(new Date());
-          const [selectedDate, setSelectedDate] = useState(new Date());
-          const [formData, setFormData] = useState({ patientName: '', doctorName: '', time: '', type: '', notes: '' });
-          const [showModal, setShowModal] = useState(false); 
-          const [mobileSelectedDate, setMobileSelectedDate] = useState(new Date());
-          const isMobile = useIsMobile();
+function Calendar() { 
+     const [appointments, setAppointments] = useState([]); 
+     const [currentDate, setCurrentDate] = useState(new Date());
+     const [selectedDate, setSelectedDate] = useState(new Date()); 
+     const [formData, setFormData] = useState({ patientName: '', doctorName: '', time: '', type: '', notes: '' }); 
+     const [showModal, setShowModal] = useState(false);
+     const [mobileSelectedDate, setMobileSelectedDate] = useState(new Date()); 
+     const isMobile = useIsMobile();
 
-useEffect(() => { 
+useEffect(() => {
      const saved = localStorage.getItem('clinic_appointments'); 
      if (saved) setAppointments(JSON.parse(saved)); 
 }, []);
 
-useEffect(() => {
-     localStorage.setItem('clinic_appointments', JSON.stringify(appointments));
+useEffect(() => { 
+     localStorage.setItem('clinic_appointments', JSON.stringify(appointments)); 
 }, [appointments]);
 
 const addAppointment = () => { 
@@ -26,8 +25,8 @@ const addAppointment = () => {
           alert("Please fill in all required fields."); 
           return; 
      } 
-     const newAppointment = { id: Date.now(), date: selectedDate.toISOString().split('T')[0], ...formData };
-     setAppointments([...appointments, newAppointment]);
+     const newAppointment = { id: Date.now(), date: selectedDate.toISOString().split('T')[0], ...formData }; 
+     setAppointments([...appointments, newAppointment]); 
      setFormData({ patientName: '', doctorName: '', time: '', type: '', notes: '' });
      setShowModal(false); };
 
@@ -36,11 +35,11 @@ const deleteAppointment = (id) => {
 
 const getDaysInMonth = (date) => { 
      const year = date.getFullYear(); 
-     const month = date.getMonth();
-     const firstDay = new Date(year, month, 1);
-     const lastDay = new Date(year, month + 1, 0);
+     const month = date.getMonth(); 
+     const firstDay = new Date(year, month, 1); 
+     const lastDay = new Date(year, month + 1, 0); 
      const daysInMonth = lastDay.getDate(); 
-     const startingDayOfWeek = firstDay.getDay();
+     const startingDayOfWeek = firstDay.getDay(); 
      const days = [];
 
 for (let i = startingDayOfWeek - 1; i >= 0; i--) {
@@ -60,14 +59,11 @@ return days;
 
 };
 
-const getAppointmentsForDate = (date) => {
-     const dateStr = date.toISOString().split('T')[0]; return appointments.filter(apt => apt.date === dateStr).sort((a, b) => a.time.localeCompare(b.time)); };
+const getAppointmentsForDate = (date) => { const dateStr = date.toISOString().split('T')[0]; return appointments.filter(apt => apt.date === dateStr).sort((a, b) => a.time.localeCompare(b.time)); };
 
-const openModal = (date) => { 
-     setSelectedDate(date); setShowModal(true); };
+const openModal = (date) => { setSelectedDate(date); setShowModal(true); };
 
-const days = getDaysInMonth(currentDate);
-const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const days = getDaysInMonth(currentDate); const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 return ( <div className="app"> <header className="header"> <h1>Medical Clinic Calendar</h1> <p>Manage patient appointments</p> </header>
 
@@ -82,6 +78,15 @@ return ( <div className="app"> <header className="header"> <h1>Medical Clinic Ca
       </div>
       <div className="mobile-day-view">
         <h3>{mobileSelectedDate.toDateString()}</h3>
+        <button 
+          className="add-btn-mobile" 
+          onClick={() => {
+            setSelectedDate(mobileSelectedDate);
+            setShowModal(true);
+          }}
+        >
+          + Add Appointment
+        </button>
         {getAppointmentsForDate(mobileSelectedDate).map(apt => (
           <div key={apt.id} className="appointment-item">
             <strong>{apt.time}</strong> – {apt.patientName} ({apt.type})
